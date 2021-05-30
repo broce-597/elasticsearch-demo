@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.broce.demo.controller;
+
+//import com.baomidou.mybatisplus.core.metadata.IPage;
+//import com.cnte.aiot.entity.Essdata;
+//import com.cnte.aiot.parameter.ESSDataQueryParameter;
+//import com.cnte.aiot.service.IEssdataService;
+//import com.cnte.aiot.vo.EssdataVO;
+//import com.cnte.aiot.wrapper.EssdataWrapper;
+//import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.broce.demo.entity.Essdata;
+import com.broce.demo.parameter.ESSDataQueryParameter;
+import com.broce.demo.service.IEssdataService;
+import com.broce.demo.vo.EssdataVO;
+import com.broce.demo.wrapper.EssdataWrapper;
+import lombok.AllArgsConstructor;
+import org.springblade.core.boot.ctrl.BladeController;
+import org.springblade.core.mp.support.Query;
+import org.springblade.core.tool.api.R;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ *  控制器
+ *
+ * @author broce
+ * @since 2021-05-30
+ */
+@RestController
+@AllArgsConstructor
+@RequestMapping("/essdata")
+public class EssdataController {
+
+	private IEssdataService essdataService;
+
+	/**
+	* 详情
+	*/
+	@GetMapping("/detail")
+
+	public R<EssdataVO> detail(Essdata essdata) {
+		R<Essdata> detail = essdataService.getById(essdata.getId());
+		if (!detail.isSuccess()){
+			return R.fail(detail.getMsg());
+		}
+		return R.data(EssdataWrapper.build().entityVO(detail.getData()));
+	}
+
+	/**
+	* 分页 
+	*/
+	@GetMapping("/list")
+	public R<IPage<EssdataVO>> list(EssdataVO essdata, ESSDataQueryParameter parameter, Query query) {
+		R<IPage<Essdata>> pages = essdataService.page(essdata,parameter,query);
+		if (!pages.isSuccess()){
+			return R.fail(pages.getMsg());
+		}
+		return R.data(EssdataWrapper.build().pageVO(pages.getData()));
+	}
+	
+}
